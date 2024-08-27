@@ -1,11 +1,11 @@
-import React from "react";
-import { useDispatch } from "react-redux";
-import { deleteTask, updateTask } from "../slice/tasksSlice";
-import { Task } from "../slice/tasksSlice";
 import { motion } from "framer-motion";
-import { AiOutlineEdit } from "react-icons/ai";
-import { MdOutlineDelete } from "react-icons/md";
-import TaskModal from "./TaskModal";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import PencilIcon from "../assets/svg/pencil.svg?react";
+import TrashIcon from "../assets/svg/trash.svg?react";
+import { Task, deleteTask, openModal } from "../slice/tasksSlice";
+import { RootState } from "../store";
+import Avvvatars from "avvvatars-react";
 
 interface TaskItemProps {
   task: Task;
@@ -14,9 +14,16 @@ interface TaskItemProps {
 
 const TaskItem: React.FC<TaskItemProps> = ({ task, onEdit }) => {
   const dispatch = useDispatch();
+  const statusMap = useSelector(
+    (state: RootState) => state.tasks.statusColorMap,
+  );
 
   const handleDelete = () => {
     dispatch(deleteTask(task.id));
+  };
+
+  const handleModalOpen = () => {
+    dispatch(openModal());
   };
 
   return (
@@ -24,25 +31,45 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onEdit }) => {
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 20 }}
-      className="flex items-center justify-between p-2 border-b"
     >
-      <div>
-        <h3 className="font-semibold">{task.title}</h3>
-        <p className="text-gray-600 text-sm">{task.description}</p>
-      </div>
-      <div className="flex items-center space-x-2">
-        <button
-          className="p-2 text-blue-500 hover:text-blue-700"
-          onClick={() => onEdit(task)}
-        >
-          <AiOutlineEdit className="w-5 h-5" />
-        </button>
-        <button
-          className="p-2 text-red-500 hover:text-red-700"
-          onClick={handleDelete}
-        >
-          <MdOutlineDelete className="w-5 h-5" />
-        </button>
+      <div className="flex items-center justify-between rounded p-4 hover:bg-offwhite">
+        <div className="flex items-start gap-2">
+          <div>
+            <Avvvatars value={task.title} size={20} />
+          </div>
+          <div className="flex flex-col gap-2">
+            <h3 className="font-semibold">{task.title}</h3>
+            <p className="text-gray-600 text-sm">{task.description}</p>
+          </div>
+        </div>
+        <div className="flex flex-col items-center">
+          <div className="flex items-center gap-2">
+            <span
+              className={`h-2 w-2 rounded-full`}
+              style={{
+                backgroundColor: statusMap[task.status],
+              }}
+            ></span>
+            <span>{task.status}</span>
+          </div>
+          <div className="flex space-x-2">
+            <button
+              className="text-blue-500 hover:text-blue-700"
+              onClick={() => {
+                handleModalOpen();
+                onEdit(task);
+              }}
+            >
+              <PencilIcon />
+            </button>
+            <button
+              className="text-red-500 hover:text-red-700"
+              onClick={handleDelete}
+            >
+              <TrashIcon />
+            </button>
+          </div>
+        </div>
       </div>
     </motion.div>
   );

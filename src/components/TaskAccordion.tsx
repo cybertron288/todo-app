@@ -1,9 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
 import ArrowIcon from "../assets/svg/arrow.svg?react";
-import { RootState } from "../store";
-import { Task } from "../types";
+import { Task } from "../slice/tasksSlice";
 import TaskItem from "./TaskItem";
 import TaskModal from "./TaskModal";
 
@@ -37,7 +35,7 @@ const TaskAccordion: React.FC<TaskAccordionProps> = ({
   return (
     <div className="my-4">
       <button
-        className="w-full bg-offwhite py-2 px-4 flex justify-between items-center rounded"
+        className="flex w-full items-center justify-between rounded bg-offwhite px-4 py-2"
         onClick={onToggle}
       >
         <div>
@@ -59,7 +57,7 @@ const TaskAccordion: React.FC<TaskAccordionProps> = ({
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="overflow-hidden px-4"
+            className="my-2 overflow-hidden"
           >
             {tasks.map((task) => (
               <TaskItem key={task.id} task={task} onEdit={handleEdit} />

@@ -16,13 +16,13 @@ const Search: React.FC<SearchProps> = ({ onSearch }) => {
   return (
     <div className="relative">
       <input
-        className="border border-gray p-2 pl-10 w-full mb-2 rounded focus:outline-primary focus:outline-1"
+        className="mb-2 w-full rounded border border-gray p-2 pl-10 focus:outline-1 focus:outline-primary"
         type="text"
         placeholder="Search To-Do"
         value={query}
         onChange={handleChange}
       />
-      <div className="absolute left-2 top-[42%] transform -translate-y-1/2">
+      <div className="absolute left-2 top-[42%] -translate-y-1/2 transform">
         <SearchIcon />
       </div>
     </div>

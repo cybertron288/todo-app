@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../store";
-import TaskAccordion from "./TaskAccordion";
 import Search from "./Search"; // Import the Search component
+import TaskAccordion from "./TaskAccordion";
 
 const TaskList: React.FC = () => {
   const tasks = useSelector((state: RootState) => state.tasks.tasks);
@@ -20,7 +20,7 @@ const TaskList: React.FC = () => {
   const filteredTasks = tasks.filter(
     (task) =>
       task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      task.description.toLowerCase().includes(searchQuery.toLowerCase())
+      task.description.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
