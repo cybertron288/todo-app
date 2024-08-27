@@ -1,22 +1,16 @@
-// AddTaskModal.tsx
+import { Combobox, Dialog } from "@headlessui/react";
+import { AnimatePresence, motion } from "framer-motion";
 import React, { useState } from "react";
-import * as Dialog from "@radix-ui/react-dialog";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { v4 as uuidv4 } from "uuid";
+import PlusIcon from "../assets/svg/plus.svg?react";
+import type { Task } from "../slice/tasksSlice";
 import {
   addTask,
-  updateTask,
-  deleteTask,
-  openModal,
   closeModal,
+  openModal,
+  updateTask,
 } from "../slice/tasksSlice";
-import { Task } from "../slice/tasksSlice";
-import { v4 as uuidv4 } from "uuid";
-import { motion, AnimatePresence } from "framer-motion";
-import PlusIcon from "../assets/svg/plus.svg?react";
-import { AiOutlineMore, AiOutlineCheck } from "react-icons/ai";
-import { MdOutlineDelete } from "react-icons/md";
-import { useSelector } from "react-redux";
 import { RootState } from "../store";
 
 interface TaskModalProps {
@@ -25,11 +19,19 @@ interface TaskModalProps {
 
 const TaskModal: React.FC<TaskModalProps> = ({ task }) => {
   const isModalOpen = useSelector(
-    (state: RootState) => state.tasks.isModalOpen
+    (state: RootState) => state.tasks.isModalOpen,
   );
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const statusMap = useSelector(
+    (state: RootState) => state.tasks.statusColorMap,
+  );
+  const [title, setTitle] = useState(task?.title || "");
+  const [description, setDescription] = useState(task?.description || "");
+  const [selectedStatus, setSelectedStatus] = useState(
+    task?.status || "pending",
+  );
   const dispatch = useDispatch();
+
+  const statuses = ["pending", "in-progress", "completed"];
 
   const handleAddTask = () => {
     if (title.trim()) {
@@ -38,8 +40,8 @@ const TaskModal: React.FC<TaskModalProps> = ({ task }) => {
           id: uuidv4(),
           title,
           description,
-          status: "pending",
-        })
+          status: selectedStatus,
+        }),
       );
       setTitle("");
       setDescription("");
@@ -54,16 +56,9 @@ const TaskModal: React.FC<TaskModalProps> = ({ task }) => {
           id: task.id,
           title,
           description,
-          status: task.status,
-        })
+          status: selectedStatus,
+        }),
       );
-      dispatch(closeModal());
-    }
-  };
-
-  const handleDelete = () => {
-    if (task) {
-      dispatch(deleteTask(task.id));
       dispatch(closeModal());
     }
   };
@@ -71,144 +66,143 @@ const TaskModal: React.FC<TaskModalProps> = ({ task }) => {
   const handleStatusChange = (newStatus: Task["status"]) => {
     if (task) {
       dispatch(
-        updateTask({ id: task.id, title, description, status: newStatus })
+        updateTask({ id: task.id, title, description, status: newStatus }),
       );
     }
   };
 
   React.useEffect(() => {
-    console.log("isOpen", isModalOpen);
-  }, [isModalOpen]);
+    setTitle(task?.title || "");
+    setDescription(task?.description || "");
+    setSelectedStatus(task?.status || "pending");
+  }, [isModalOpen, task]);
 
   return (
-    <Dialog.Root open={isModalOpen}>
-      <Dialog.Trigger asChild>
-        <motion.button
-          className="fixed bottom-6 right-6 bg-primary text-white w-20 h-20 rounded-full shadow-lg flex items-center justify-center"
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          exit={{ scale: 0 }}
-          transition={{ duration: 0.3 }}
-          onClick={() => dispatch(openModal())}
-        >
-          <PlusIcon />
-        </motion.button>
-      </Dialog.Trigger>
+    <>
+      <button
+        className="fixed bottom-6 right-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary text-white shadow-lg"
+        onClick={() => {
+          setTitle("");
+          setDescription("");
+          setSelectedStatus("pending");
+          dispatch(openModal());
+        }}
+      >
+        <PlusIcon />
+      </button>
+
       <AnimatePresence>
         {isModalOpen && (
-          <>
+          <Dialog
+            open={isModalOpen}
+            onClose={() => dispatch(closeModal())}
+            className="relative z-50"
+          >
+            {/* Backdrop */}
             <motion.div
-              className="fixed z-10 inset-0 bg-black/50"
+              className="fixed inset-0 bg-black bg-opacity-50"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
             />
-            <motion.div
-              className="fixed z-10 inset-0 sm:inset-1/4 bg-white p-6 rounded shadow-lg w-full h-full sm:w-auto sm:h-fit sm:rounded-lg overflow-auto"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.3 }}
-            >
-              <Dialog.Content>
-                <Dialog.Title className="text-lg font-bold">
+
+            <div className="fixed inset-0 flex w-screen items-center justify-center md:p-4">
+              <motion.div
+                className="h-full w-full space-y-4 border bg-white shadow-lg md:h-auto md:w-[498px] md:rounded-lg md:p-6"
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.8, opacity: 0 }}
+              >
+                <Dialog.Title className="bg-primary p-6 text-lg font-bold text-white md:bg-white md:p-0 md:text-inherit">
                   {task ? "Edit Task" : "Add Task"}
                 </Dialog.Title>
-                <Dialog.Close
-                  className="absolute top-2 right-4"
-                  onClick={() => dispatch(closeModal())}
-                >
-                  <button className="text-gray-500 text-3xl hover:text-gray-700">
-                    &times;
-                  </button>
-                </Dialog.Close>
-                <div className="mt-4">
+                <div className="mt-4 flex flex-col gap-4 p-6 md:p-0">
                   <input
-                    className="border border-gray p-2 w-full mb-2 rounded focus:outline-primary focus:outline-1"
+                    className="w-full rounded border border-gray p-2 focus:outline-1 focus:outline-primary"
                     type="text"
                     placeholder="Enter the title"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                   />
                   <textarea
-                    className="border border-gray p-2 w-full mb-2 rounded focus:outline-primary focus:outline-1"
+                    className="w-full rounded border border-gray p-2 focus:outline-1 focus:outline-primary"
                     placeholder="Enter the description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                   />
                   {task && (
-                    <div className="mt-4">
-                      <DropdownMenu.Root>
-                        <DropdownMenu.Trigger className="flex items-center p-2 bg-gray-100 rounded hover:bg-gray-200 cursor-pointer">
-                          <AiOutlineMore className="w-5 h-5 text-gray-600" />
-                        </DropdownMenu.Trigger>
-                        <DropdownMenu.Content
-                          className="bg-white border rounded shadow-lg w-40 p-2"
-                          sideOffset={5}
-                        >
-                          <DropdownMenu.Item
-                            className="flex items-center p-2 cursor-pointer hover:bg-gray-100"
-                            onSelect={() => handleStatusChange("pending")}
-                          >
-                            <span className="mr-2">Pending</span>
-                            {task.status === "pending" && (
-                              <AiOutlineCheck className="w-5 h-5 text-green-500" />
-                            )}
-                          </DropdownMenu.Item>
-                          <DropdownMenu.Item
-                            className="flex items-center p-2 cursor-pointer hover:bg-gray-100"
-                            onSelect={() => handleStatusChange("in-progress")}
-                          >
-                            <span className="mr-2">In Progress</span>
-                            {task.status === "in-progress" && (
-                              <AiOutlineCheck className="w-5 h-5 text-green-500" />
-                            )}
-                          </DropdownMenu.Item>
-                          <DropdownMenu.Item
-                            className="flex items-center p-2 cursor-pointer hover:bg-gray-100"
-                            onSelect={() => handleStatusChange("completed")}
-                          >
-                            <span className="mr-2">Completed</span>
-                            {task.status === "completed" && (
-                              <AiOutlineCheck className="w-5 h-5 text-green-500" />
-                            )}
-                          </DropdownMenu.Item>
-                          <DropdownMenu.Separator className="my-1 border-t border-gray-200" />
-                          <DropdownMenu.Item
-                            className="flex items-center p-2 cursor-pointer text-red-500 hover:bg-red-100"
-                            onSelect={handleDelete}
-                          >
-                            <MdOutlineDelete className="w-5 h-5 mr-2" />
-                            <span>Delete</span>
-                          </DropdownMenu.Item>
-                        </DropdownMenu.Content>
-                      </DropdownMenu.Root>
+                    <div>
+                      <Combobox
+                        value={selectedStatus}
+                        onChange={setSelectedStatus}
+                      >
+                        <div className="relative">
+                          <Combobox.Button as="div">
+                            <Combobox.Input
+                              readOnly
+                              className="bg-gray-800 inline-flex w-full cursor-pointer items-center gap-2 rounded-md border border-gray px-3 py-1.5 text-sm/6 focus:outline-none"
+                              displayValue={(status: string) => status}
+                            />
+                          </Combobox.Button>
+                          <Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto bg-white py-4 pl-4 pr-5 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                            {statuses.map((status) => (
+                              <Combobox.Option
+                                key={status}
+                                value={status}
+                                onSelect={() => handleStatusChange(status)}
+                                className={({ active }) =>
+                                  `relative cursor-pointer select-none px-4 py-2 ${
+                                    active ? "bg-offwhite" : "text-gray-900"
+                                  }`
+                                }
+                              >
+                                {({ selected, active }) => (
+                                  <>
+                                    <span
+                                      className={`flex items-center gap-2 ${
+                                        selected ? "font-medium" : "font-normal"
+                                      }`}
+                                    >
+                                      <span
+                                        className={`h-2 w-2 rounded-full`}
+                                        style={{
+                                          backgroundColor: statusMap[status],
+                                        }}
+                                      ></span>
+                                      {status.charAt(0).toUpperCase() +
+                                        status.slice(1)}
+                                    </span>
+                                  </>
+                                )}
+                              </Combobox.Option>
+                            ))}
+                          </Combobox.Options>
+                        </div>
+                      </Combobox>
                     </div>
                   )}
-                  <div className="flex justify-between mt-4">
-                    <Dialog.Close>
-                      <button
-                        className="border-primary border text-primary px-6 py-2 rounded"
-                        onClick={() => dispatch(closeModal())}
-                      >
-                        Cancel
-                      </button>
-                    </Dialog.Close>
+                  <div className="mt-4 flex justify-between">
                     <button
-                      className="bg-primary text-white px-6 py-2 rounded"
+                      className="rounded border border-primary px-6 py-2 text-primary"
+                      onClick={() => dispatch(closeModal())}
+                    >
+                      Cancel
+                    </button>
+
+                    <button
+                      className="rounded bg-primary px-6 py-2 text-white"
                       onClick={task ? handleSaveChanges : handleAddTask}
                     >
-                      {task ? "Save" : "ADD"}
+                      {task ? "Update" : "ADD"}
                     </button>
                   </div>
                 </div>
-              </Dialog.Content>
-            </motion.div>
-          </>
+              </motion.div>
+            </div>
+          </Dialog>
         )}
       </AnimatePresence>
-    </Dialog.Root>
+    </>
   );
 };
 
