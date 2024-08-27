@@ -5,6 +5,7 @@ import PencilIcon from "../assets/svg/pencil.svg?react";
 import TrashIcon from "../assets/svg/trash.svg?react";
 import { Task, deleteTask, openModal } from "../slice/tasksSlice";
 import { RootState } from "../store";
+import Avvvatars from "avvvatars-react";
 
 interface TaskItemProps {
   task: Task;
@@ -31,10 +32,15 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onEdit }) => {
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 20 }}
     >
-      <div className="flex items-center justify-between p-4 hover:bg-offwhite">
-        <div>
-          <h3 className="font-semibold">{task.title}</h3>
-          <p className="text-gray-600 text-sm">{task.description}</p>
+      <div className="flex items-center justify-between rounded p-4 hover:bg-offwhite">
+        <div className="flex items-start gap-2">
+          <div>
+            <Avvvatars value={task.title} size={20} />
+          </div>
+          <div className="flex flex-col gap-2">
+            <h3 className="font-semibold">{task.title}</h3>
+            <p className="text-gray-600 text-sm">{task.description}</p>
+          </div>
         </div>
         <div className="flex flex-col items-center">
           <div className="flex items-center gap-2">

@@ -41,12 +41,13 @@ const tasksSlice = createSlice({
             state.tasks.push(action.payload);
             saveTasksToLocalStorage(state.tasks);
         },
-        updateTask: (state, action: PayloadAction<{ id: string; title: string; status: Task['status'] }>) => {
-            const { id, title, status } = action.payload;
+        updateTask: (state, action: PayloadAction<{ id: string; title: string; description: string; status: Task['status'] }>) => {
+            const { id, title, status, description } = action.payload;
             const task = state.tasks.find(task => task.id === id);
             if (task) {
                 task.title = title;
                 task.status = status;
+                task.description = description;
                 saveTasksToLocalStorage(state.tasks);
             }
         },

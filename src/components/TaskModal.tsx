@@ -1,6 +1,6 @@
 import { Combobox, Dialog } from "@headlessui/react";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
 import PlusIcon from "../assets/svg/plus.svg?react";
@@ -71,7 +71,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ task }) => {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     setTitle(task?.title || "");
     setDescription(task?.description || "");
     setSelectedStatus(task?.status || "pending");
@@ -108,7 +108,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ task }) => {
 
             <div className="fixed inset-0 flex w-screen items-center justify-center md:p-4">
               <motion.div
-                className="h-full w-full space-y-4 border bg-white shadow-lg md:h-auto md:w-[498px] md:rounded-lg md:p-6"
+                className="h-full w-full space-y-4 border bg-white shadow-lg md:h-auto md:w-[498px] md:rounded md:p-6"
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.8, opacity: 0 }}
@@ -140,7 +140,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ task }) => {
                           <Combobox.Button as="div">
                             <Combobox.Input
                               readOnly
-                              className="bg-gray-800 inline-flex w-full cursor-pointer items-center gap-2 rounded-md border border-gray px-3 py-1.5 text-sm/6 focus:outline-none"
+                              className="bg-gray-800 inline-flex w-full cursor-pointer items-center gap-2 rounded border border-gray px-3 py-1.5 pr-10 text-sm/6 focus:outline-none"
                               displayValue={(status: string) => status}
                             />
                           </Combobox.Button>
@@ -149,9 +149,16 @@ const TaskModal: React.FC<TaskModalProps> = ({ task }) => {
                               <Combobox.Option
                                 key={status}
                                 value={status}
-                                onSelect={() => handleStatusChange(status)}
+                                onSelect={() =>
+                                  handleStatusChange(
+                                    status as
+                                      | "pending"
+                                      | "in-progress"
+                                      | "completed",
+                                  )
+                                }
                                 className={({ active }) =>
-                                  `relative cursor-pointer select-none px-4 py-2 ${
+                                  `relative cursor-pointer select-none rounded px-4 py-2 ${
                                     active ? "bg-offwhite" : "text-gray-900"
                                   }`
                                 }
