@@ -11,7 +11,7 @@ import {
   updateTask,
 } from "../slice/tasksSlice";
 import { RootState } from "../store";
-import type { Task } from "../slice/tasksSlice";
+import type { Task, StatusColorMap } from "../slice/tasksSlice";
 
 interface TaskModalProps {
   task?: Task;
@@ -23,7 +23,7 @@ const TaskModal: React.FC<TaskModalProps> = ({}) => {
   const isModalOpen = useSelector(
     (state: RootState) => state.tasks.isModalOpen,
   );
-  const statusColorMap = useSelector(
+  const statusColorMap: StatusColorMap = useSelector(
     (state: RootState) => state.tasks.statusColorMap,
   );
   const editTask = useSelector((state: RootState) => state.tasks.editTask);
@@ -156,6 +156,7 @@ const TaskModal: React.FC<TaskModalProps> = ({}) => {
                                     <span
                                       className={`h-2 w-2 rounded-full`}
                                       style={{
+                                        // @ts-ignore
                                         backgroundColor: statusColorMap[status],
                                       }}
                                     ></span>

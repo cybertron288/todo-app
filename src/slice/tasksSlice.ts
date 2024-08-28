@@ -7,15 +7,17 @@ export interface Task {
     status: 'pending' | 'in-progress' | 'completed';
 }
 
+export interface StatusColorMap {
+    pending: string,
+    "in-progress": string,
+    completed: string,
+}
+
 interface TasksState {
     tasks: Task[];
     editTask: Task | null;
     isModalOpen: boolean;
-    statusColorMap: {
-        pending: string,
-        "in-progress": string,
-        completed: string,
-    };
+    statusColorMap: StatusColorMap;
 }
 
 const loadTasksFromLocalStorage = (): Task[] => {
