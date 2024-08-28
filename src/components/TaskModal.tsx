@@ -180,8 +180,9 @@ const TaskModal: React.FC<TaskModalProps> = ({}) => {
                     </button>
 
                     <button
-                      className="rounded bg-primary px-6 py-2 text-white"
+                      className="rounded bg-primary px-6 py-2 text-white disabled:bg-primary/60"
                       onClick={handleAddOrUpdateTask}
+                      disabled={!(title.trim().length > 0)}
                     >
                       {editTask ? "Update" : "ADD"}
                     </button>
