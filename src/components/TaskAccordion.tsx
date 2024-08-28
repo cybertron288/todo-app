@@ -1,9 +1,8 @@
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useState } from "react";
+import React from "react";
 import ArrowIcon from "../assets/svg/arrow.svg?react";
-import { Task, openModal } from "../slice/tasksSlice";
+import { Task } from "../slice/tasksSlice";
 import TaskItem from "./TaskItem";
-import { useDispatch } from "react-redux";
 
 interface TaskAccordionProps {
   title: string;
@@ -18,12 +17,6 @@ const TaskAccordion: React.FC<TaskAccordionProps> = ({
   isOpen,
   onToggle,
 }) => {
-  const dispatch = useDispatch();
-
-  const handleEdit = (task: Task) => {
-    dispatch(openModal(task));
-  };
-
   return (
     <div className="my-4">
       <button
@@ -52,7 +45,7 @@ const TaskAccordion: React.FC<TaskAccordionProps> = ({
             className="my-2 overflow-hidden"
           >
             {tasks.map((task) => (
-              <TaskItem key={task.id} task={task} onEdit={handleEdit} />
+              <TaskItem key={task.id} task={task} />
             ))}
             {tasks.length === 0 && "No items"}
           </motion.div>

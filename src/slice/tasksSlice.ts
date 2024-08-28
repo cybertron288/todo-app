@@ -11,7 +11,11 @@ interface TasksState {
     tasks: Task[];
     editTask: Task | null;
     isModalOpen: boolean;
-    statusColorMap: {};
+    statusColorMap: {
+        pending: string,
+        "in-progress": string,
+        completed: string,
+    };
 }
 
 const loadTasksFromLocalStorage = (): Task[] => {

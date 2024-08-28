@@ -23,7 +23,7 @@ const TaskModal: React.FC<TaskModalProps> = ({}) => {
   const isModalOpen = useSelector(
     (state: RootState) => state.tasks.isModalOpen,
   );
-  const statusMap = useSelector(
+  const statusColorMap = useSelector(
     (state: RootState) => state.tasks.statusColorMap,
   );
   const editTask = useSelector((state: RootState) => state.tasks.editTask);
@@ -75,7 +75,7 @@ const TaskModal: React.FC<TaskModalProps> = ({}) => {
         className="fixed bottom-6 right-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary text-white shadow-lg"
         onClick={() => {
           resetForm();
-          dispatch(openModal());
+          dispatch(openModal(null));
         }}
       >
         <PlusIcon />
@@ -103,7 +103,7 @@ const TaskModal: React.FC<TaskModalProps> = ({}) => {
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.8, opacity: 0 }}
               >
-                <Dialog.Title className="bg-primary p-6 text-lg font-bold text-white md:bg-white md:p-0 md:text-inherit">
+                <Dialog.Title className="bg-primary p-6 text-2xl font-bold text-white md:bg-white md:p-0 md:text-inherit">
                   {editTask ? "Edit Task" : "Add Task"}
                 </Dialog.Title>
                 <div className="mt-4 flex flex-col gap-4 p-6 md:p-0">
@@ -124,7 +124,9 @@ const TaskModal: React.FC<TaskModalProps> = ({}) => {
                     <div>
                       <Combobox
                         value={selectedStatus}
-                        onChange={setSelectedStatus}
+                        onChange={(value) =>
+                          setSelectedStatus(value ?? "pending")
+                        }
                       >
                         <div className="relative">
                           <Combobox.Button as="div">
@@ -154,7 +156,7 @@ const TaskModal: React.FC<TaskModalProps> = ({}) => {
                                     <span
                                       className={`h-2 w-2 rounded-full`}
                                       style={{
-                                        backgroundColor: statusMap[status],
+                                        backgroundColor: statusColorMap[status],
                                       }}
                                     ></span>
                                     {status.charAt(0).toUpperCase() +
@@ -168,7 +170,7 @@ const TaskModal: React.FC<TaskModalProps> = ({}) => {
                       </Combobox>
                     </div>
                   )}
-                  <div className="mt-4 flex justify-between">
+                  <div className="absolute bottom-0 left-0 mt-4 flex w-full justify-between p-6 md:relative md:p-0 md:px-0">
                     <button
                       className="rounded border border-primary px-6 py-2 text-primary"
                       onClick={() => dispatch(closeModal())}
