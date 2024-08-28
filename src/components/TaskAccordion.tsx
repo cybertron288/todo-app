@@ -1,9 +1,8 @@
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useState } from "react";
+import React from "react";
 import ArrowIcon from "../assets/svg/arrow.svg?react";
 import { Task } from "../slice/tasksSlice";
 import TaskItem from "./TaskItem";
-import TaskModal from "./TaskModal";
 
 interface TaskAccordionProps {
   title: string;
@@ -18,20 +17,6 @@ const TaskAccordion: React.FC<TaskAccordionProps> = ({
   isOpen,
   onToggle,
 }) => {
-  const [editTask, setEditTask] = useState<Task | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handleEdit = (task: Task) => {
-    setEditTask(task);
-  };
-
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
-
   return (
     <div className="my-4">
       <button
@@ -60,20 +45,12 @@ const TaskAccordion: React.FC<TaskAccordionProps> = ({
             className="my-2 overflow-hidden"
           >
             {tasks.map((task) => (
-              <TaskItem key={task.id} task={task} onEdit={handleEdit} />
+              <TaskItem key={task.id} task={task} />
             ))}
-            {tasks.length === 0 && "No items"}
+            {tasks.length === 0 && <span className="p-4">No items</span>}
           </motion.div>
         )}
       </AnimatePresence>
-      {editTask && (
-        <TaskModal
-          task={editTask}
-          isOpen={isModalOpen}
-          openModal={handleOpenModal}
-          closeModal={handleCloseModal}
-        />
-      )}
     </div>
   );
 };

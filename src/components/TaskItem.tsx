@@ -1,29 +1,31 @@
 import { motion } from "framer-motion";
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import PencilIcon from "../assets/svg/pencil.svg?react";
 import TrashIcon from "../assets/svg/trash.svg?react";
 import { Task, deleteTask, openModal } from "../slice/tasksSlice";
 import { RootState } from "../store";
 import Avvvatars from "avvvatars-react";
+import ConfirmationDialog from "./ConfirmationDialog"; // Import the confirmation dialog
 
 interface TaskItemProps {
   task: Task;
-  onEdit: (task: Task) => void;
 }
 
-const TaskItem: React.FC<TaskItemProps> = ({ task, onEdit }) => {
+const TaskItem: React.FC<TaskItemProps> = ({ task }) => {
   const dispatch = useDispatch();
   const statusMap = useSelector(
     (state: RootState) => state.tasks.statusColorMap,
   );
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false); // State for dialog visibility
 
   const handleDelete = () => {
     dispatch(deleteTask(task.id));
   };
 
   const handleModalOpen = () => {
-    dispatch(openModal());
+    dispatch(openModal(task));
   };
 
   return (
@@ -55,22 +57,27 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onEdit }) => {
           <div className="flex space-x-2">
             <button
               className="text-blue-500 hover:text-blue-700"
-              onClick={() => {
-                handleModalOpen();
-                onEdit(task);
-              }}
+              onClick={handleModalOpen}
             >
               <PencilIcon />
             </button>
             <button
               className="text-red-500 hover:text-red-700"
-              onClick={handleDelete}
+              onClick={() => setIsDialogOpen(true)} // Open the confirmation dialog
             >
               <TrashIcon />
             </button>
           </div>
         </div>
       </div>
+
+      <ConfirmationDialog
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        onConfirm={handleDelete}
+        title="Delete Task"
+        description="Are you sure you want to delete this task? This action cannot be undone."
+      />
     </motion.div>
   );
 };

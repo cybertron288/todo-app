@@ -7,10 +7,17 @@ export interface Task {
     status: 'pending' | 'in-progress' | 'completed';
 }
 
+export interface StatusColorMap {
+    pending: string,
+    "in-progress": string,
+    completed: string,
+}
+
 interface TasksState {
     tasks: Task[];
-    isModalOpen: boolean
-    statusColorMap: {}
+    editTask: Task | null;
+    isModalOpen: boolean;
+    statusColorMap: StatusColorMap;
 }
 
 const loadTasksFromLocalStorage = (): Task[] => {
@@ -26,6 +33,7 @@ const saveTasksToLocalStorage = (tasks: Task[]) => {
 const initialState: TasksState = {
     tasks: loadTasksFromLocalStorage(),
     isModalOpen: false,
+    editTask: null,
     statusColorMap: {
         pending: "#D0D0D0",
         "in-progress": "#FFB03C",
@@ -55,11 +63,13 @@ const tasksSlice = createSlice({
             state.tasks = state.tasks.filter(task => task.id !== action.payload);
             saveTasksToLocalStorage(state.tasks);
         },
-        openModal: (state) => {
+        openModal: (state, action: PayloadAction<Task | null>) => {
             state.isModalOpen = true
+            state.editTask = action.payload;
         },
         closeModal: (state) => {
             state.isModalOpen = false
+            state.editTask = null;
         }
     },
 });
