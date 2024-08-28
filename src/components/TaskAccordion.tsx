@@ -47,7 +47,7 @@ const TaskAccordion: React.FC<TaskAccordionProps> = ({
             {tasks.map((task) => (
               <TaskItem key={task.id} task={task} />
             ))}
-            {tasks.length === 0 && "No items"}
+            {tasks.length === 0 && <span className="p-4">No items</span>}
           </motion.div>
         )}
       </AnimatePresence>
