@@ -23,6 +23,10 @@ This is a simple TO-DO application built using React, TypeScript, Vite, Tailwind
 - **Redux:** State management library.
 - **Framer Motion:** Library for animations.
 
+## Tech Stack
+
+Demo: https://todo-app-sigma-neon.vercel.app/
+
 ## Getting Started
 
 To get a local copy of the project up and running, follow these steps:
