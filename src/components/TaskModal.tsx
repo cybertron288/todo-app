@@ -136,7 +136,7 @@ const TaskModal: React.FC<TaskModalProps> = ({}) => {
                               displayValue={(status: string) => status}
                             />
                           </Combobox.Button>
-                          <Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto bg-white py-4 pl-4 pr-5 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                          <Combobox.Options className="absolute mt-1 z-[2] max-h-60 w-full overflow-auto bg-white py-4 pl-4 pr-5 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                             {statuses.map((status) => (
                               <Combobox.Option
                                 key={status}
