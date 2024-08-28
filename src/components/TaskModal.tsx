@@ -132,11 +132,11 @@ const TaskModal: React.FC<TaskModalProps> = ({}) => {
                           <Combobox.Button as="div">
                             <Combobox.Input
                               readOnly
-                              className="bg-gray-800 inline-flex w-full cursor-pointer items-center gap-2 rounded border border-gray px-3 py-1.5 pr-10 text-sm/6 focus:outline-none"
+                              className="bg-gray-800 inline-flex w-full cursor-pointer items-center gap-2 rounded border border-gray px-3 py-1.5 pr-10 text-sm/6 focus:outline-primary"
                               displayValue={(status: string) => status}
                             />
                           </Combobox.Button>
-                          <Combobox.Options className="absolute mt-1 z-[2] max-h-60 w-full overflow-auto bg-white py-4 pl-4 pr-5 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                          <Combobox.Options className="absolute z-[2] mt-1 max-h-60 w-full overflow-auto bg-white py-4 pl-4 pr-5 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                             {statuses.map((status) => (
                               <Combobox.Option
                                 key={status}
