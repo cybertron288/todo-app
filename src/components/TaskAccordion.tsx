@@ -1,9 +1,9 @@
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useState } from "react";
 import ArrowIcon from "../assets/svg/arrow.svg?react";
-import { Task } from "../slice/tasksSlice";
+import { Task, openModal } from "../slice/tasksSlice";
 import TaskItem from "./TaskItem";
-import TaskModal from "./TaskModal";
+import { useDispatch } from "react-redux";
 
 interface TaskAccordionProps {
   title: string;
@@ -18,18 +18,10 @@ const TaskAccordion: React.FC<TaskAccordionProps> = ({
   isOpen,
   onToggle,
 }) => {
-  const [editTask, setEditTask] = useState<Task | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const dispatch = useDispatch();
 
   const handleEdit = (task: Task) => {
-    setEditTask(task);
-  };
-
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+    dispatch(openModal(task));
   };
 
   return (
@@ -66,14 +58,6 @@ const TaskAccordion: React.FC<TaskAccordionProps> = ({
           </motion.div>
         )}
       </AnimatePresence>
-      {editTask && (
-        <TaskModal
-          task={editTask}
-          isOpen={isModalOpen}
-          openModal={handleOpenModal}
-          closeModal={handleCloseModal}
-        />
-      )}
     </div>
   );
 };

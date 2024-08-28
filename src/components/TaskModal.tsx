@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
 import PlusIcon from "../assets/svg/plus.svg?react";
-import type { Task } from "../slice/tasksSlice";
 import {
   addTask,
   closeModal,
@@ -12,79 +11,70 @@ import {
   updateTask,
 } from "../slice/tasksSlice";
 import { RootState } from "../store";
+import type { Task } from "../slice/tasksSlice";
 
 interface TaskModalProps {
   task?: Task;
 }
 
-const TaskModal: React.FC<TaskModalProps> = ({ task }) => {
+type TaskStatus = "pending" | "in-progress" | "completed";
+
+const TaskModal: React.FC<TaskModalProps> = ({}) => {
   const isModalOpen = useSelector(
     (state: RootState) => state.tasks.isModalOpen,
   );
   const statusMap = useSelector(
     (state: RootState) => state.tasks.statusColorMap,
   );
-  const [title, setTitle] = useState(task?.title || "");
-  const [description, setDescription] = useState(task?.description || "");
-  const [selectedStatus, setSelectedStatus] = useState(
-    task?.status || "pending",
-  );
+  const editTask = useSelector((state: RootState) => state.tasks.editTask);
   const dispatch = useDispatch();
+
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("pending");
 
   const statuses = ["pending", "in-progress", "completed"];
 
-  const handleAddTask = () => {
-    if (title.trim()) {
-      dispatch(
-        addTask({
-          id: uuidv4(),
-          title,
-          description,
-          status: selectedStatus,
-        }),
-      );
-      setTitle("");
-      setDescription("");
-      dispatch(closeModal());
-    }
-  };
-
-  const handleSaveChanges = () => {
-    if (task) {
-      dispatch(
-        updateTask({
-          id: task.id,
-          title,
-          description,
-          status: selectedStatus,
-        }),
-      );
-      dispatch(closeModal());
-    }
-  };
-
-  const handleStatusChange = (newStatus: Task["status"]) => {
-    if (task) {
-      dispatch(
-        updateTask({ id: task.id, title, description, status: newStatus }),
-      );
-    }
-  };
-
   useEffect(() => {
-    setTitle(task?.title || "");
-    setDescription(task?.description || "");
-    setSelectedStatus(task?.status || "pending");
-  }, [isModalOpen, task]);
+    if (editTask) {
+      setTitle(editTask.title);
+      setDescription(editTask.description);
+      setSelectedStatus(editTask.status);
+    } else {
+      resetForm();
+    }
+  }, [editTask, isModalOpen]);
+
+  const resetForm = () => {
+    setTitle("");
+    setDescription("");
+    setSelectedStatus("pending");
+  };
+
+  const handleAddOrUpdateTask = () => {
+    if (title.trim()) {
+      const taskData: {
+        id: string;
+        title: string;
+        description: string;
+        status: TaskStatus;
+      } = {
+        id: editTask?.id || uuidv4(),
+        title,
+        description,
+        status: selectedStatus as TaskStatus,
+      };
+      editTask ? dispatch(updateTask(taskData)) : dispatch(addTask(taskData));
+      dispatch(closeModal());
+    }
+  };
 
   return (
     <>
       <button
         className="fixed bottom-6 right-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary text-white shadow-lg"
         onClick={() => {
-          setTitle("");
-          setDescription("");
-          setSelectedStatus("pending");
+          resetForm();
           dispatch(openModal());
         }}
       >
@@ -108,13 +98,13 @@ const TaskModal: React.FC<TaskModalProps> = ({ task }) => {
 
             <div className="fixed inset-0 flex w-screen items-center justify-center md:p-4">
               <motion.div
-                className="h-full w-full space-y-4 border bg-white shadow-lg md:h-auto md:w-[498px] md:rounded md:p-6"
+                className="h-full w-full space-y-4 bg-white shadow-lg md:h-auto md:w-[498px] md:rounded md:p-6"
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.8, opacity: 0 }}
               >
                 <Dialog.Title className="bg-primary p-6 text-lg font-bold text-white md:bg-white md:p-0 md:text-inherit">
-                  {task ? "Edit Task" : "Add Task"}
+                  {editTask ? "Edit Task" : "Add Task"}
                 </Dialog.Title>
                 <div className="mt-4 flex flex-col gap-4 p-6 md:p-0">
                   <input
@@ -130,7 +120,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ task }) => {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                   />
-                  {task && (
+                  {editTask && (
                     <div>
                       <Combobox
                         value={selectedStatus}
@@ -149,37 +139,27 @@ const TaskModal: React.FC<TaskModalProps> = ({ task }) => {
                               <Combobox.Option
                                 key={status}
                                 value={status}
-                                onSelect={() =>
-                                  handleStatusChange(
-                                    status as
-                                      | "pending"
-                                      | "in-progress"
-                                      | "completed",
-                                  )
-                                }
                                 className={({ active }) =>
                                   `relative cursor-pointer select-none rounded px-4 py-2 ${
                                     active ? "bg-offwhite" : "text-gray-900"
                                   }`
                                 }
                               >
-                                {({ selected, active }) => (
-                                  <>
+                                {({ selected }) => (
+                                  <span
+                                    className={`flex items-center gap-2 ${
+                                      selected ? "font-medium" : "font-normal"
+                                    }`}
+                                  >
                                     <span
-                                      className={`flex items-center gap-2 ${
-                                        selected ? "font-medium" : "font-normal"
-                                      }`}
-                                    >
-                                      <span
-                                        className={`h-2 w-2 rounded-full`}
-                                        style={{
-                                          backgroundColor: statusMap[status],
-                                        }}
-                                      ></span>
-                                      {status.charAt(0).toUpperCase() +
-                                        status.slice(1)}
-                                    </span>
-                                  </>
+                                      className={`h-2 w-2 rounded-full`}
+                                      style={{
+                                        backgroundColor: statusMap[status],
+                                      }}
+                                    ></span>
+                                    {status.charAt(0).toUpperCase() +
+                                      status.slice(1)}
+                                  </span>
                                 )}
                               </Combobox.Option>
                             ))}
@@ -198,9 +178,9 @@ const TaskModal: React.FC<TaskModalProps> = ({ task }) => {
 
                     <button
                       className="rounded bg-primary px-6 py-2 text-white"
-                      onClick={task ? handleSaveChanges : handleAddTask}
+                      onClick={handleAddOrUpdateTask}
                     >
-                      {task ? "Update" : "ADD"}
+                      {editTask ? "Update" : "ADD"}
                     </button>
                   </div>
                 </div>
