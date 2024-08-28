@@ -23,10 +23,6 @@ This is a simple TO-DO application built using React, TypeScript, Vite, Tailwind
 - **Redux:** State management library.
 - **Framer Motion:** Library for animations.
 
-## Screenshots
-
-![Task Management Application](./screenshots/task-manager.png)
-
 ## Getting Started
 
 To get a local copy of the project up and running, follow these steps:
