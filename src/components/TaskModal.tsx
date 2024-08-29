@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
 import PlusIcon from "../assets/svg/plus.svg?react";
+import BackIcon from "../assets/svg/back.svg?react";
 import {
   addTask,
   closeModal,
@@ -17,7 +18,7 @@ interface TaskModalProps {
   task?: Task;
 }
 
-type TaskStatus = "pending" | "in-progress" | "completed";
+type TaskStatus = "pending" | "In progress" | "completed";
 
 const TaskModal: React.FC<TaskModalProps> = ({}) => {
   const isModalOpen = useSelector(
@@ -33,7 +34,7 @@ const TaskModal: React.FC<TaskModalProps> = ({}) => {
   const [description, setDescription] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("pending");
 
-  const statuses = ["pending", "in-progress", "completed"];
+  const statuses = ["pending", "In progress", "completed"];
 
   useEffect(() => {
     if (editTask) {
@@ -58,11 +59,13 @@ const TaskModal: React.FC<TaskModalProps> = ({}) => {
         title: string;
         description: string;
         status: TaskStatus;
+        date: Date;
       } = {
         id: editTask?.id || uuidv4(),
         title,
         description,
         status: selectedStatus as TaskStatus,
+        date: new Date()
       };
       editTask ? dispatch(updateTask(taskData)) : dispatch(addTask(taskData));
       dispatch(closeModal());
@@ -103,8 +106,11 @@ const TaskModal: React.FC<TaskModalProps> = ({}) => {
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.8, opacity: 0 }}
               >
-                <Dialog.Title className="bg-primary p-6 text-2xl font-bold text-white md:bg-white md:p-0 md:text-inherit">
-                  {editTask ? "Edit Task" : "Add Task"}
+                <Dialog.Title className="flex gap-5 bg-primary p-6 text-2xl font-bold text-white md:bg-white md:p-0 md:text-inherit">
+                  <span className="md:hidden" onClick={() => dispatch(closeModal())}>
+                    <BackIcon />
+                  </span>
+                  <span>{editTask ? "Edit Task" : "Add Task"}</span>
                 </Dialog.Title>
                 <div className="mt-4 flex flex-col gap-4 p-6 md:p-0">
                   <input
@@ -149,12 +155,10 @@ const TaskModal: React.FC<TaskModalProps> = ({}) => {
                               >
                                 {({ selected }) => (
                                   <span
-                                    className={`flex items-center gap-2 ${
-                                      selected ? "font-medium" : "font-normal"
-                                    }`}
+                                    className={`flex items-center gap-2`}
                                   >
                                     <span
-                                      className={`h-2 w-2 rounded-full`}
+                                      className={`h-3 w-3 rounded-full`}
                                       style={{
                                         // @ts-ignore
                                         backgroundColor: statusColorMap[status],

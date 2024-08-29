@@ -1,6 +1,7 @@
 import React from "react";
 import { Dialog } from "@headlessui/react";
 import { motion, AnimatePresence } from "framer-motion";
+import BackIcon from "../assets/svg/back.svg?react";
 
 interface ConfirmationDialogProps {
   isOpen: boolean;
@@ -42,7 +43,10 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
             exit={{ scale: 0.8, opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
-            <Dialog.Title className="bg-primary p-6 text-2xl font-bold text-white md:bg-white md:p-0 md:text-inherit">
+            <Dialog.Title className="bg-primary p-6 text-2xl font-bold text-white md:bg-white md:p-0 flex gap-5 md:text-inherit">
+              <span className="md:hidden" onClick={onClose}>
+                <BackIcon />
+              </span>
               {title}
             </Dialog.Title>
             <Dialog.Description className="mt-2 p-6 text-sm md:p-0">

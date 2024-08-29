@@ -6,7 +6,8 @@ import TrashIcon from "../assets/svg/trash.svg?react";
 import { Task, deleteTask, openModal } from "../slice/tasksSlice";
 import { RootState } from "../store";
 import Avvvatars from "avvvatars-react";
-import ConfirmationDialog from "./ConfirmationDialog"; // Import the confirmation dialog
+import ConfirmationDialog from "./ConfirmationDialog"; 
+import Dayjs from "dayjs";
 
 interface TaskItemProps {
   task: Task;
@@ -18,7 +19,16 @@ const TaskItem: React.FC<TaskItemProps> = ({ task }) => {
     (state: RootState) => state.tasks.statusColorMap,
   );
 
-  const [isDialogOpen, setIsDialogOpen] = useState(false); // State for dialog visibility
+  const [isDialogOpen, setIsDialogOpen] = useState(false); 
+   const [isTouched, setIsTouched] = useState(false);
+
+   const handleTouchStart = () => {
+     setIsTouched(true);
+   };
+
+   const handleTouchEnd = () => {
+     setIsTouched(false);
+   };
 
   const handleDelete = () => {
     dispatch(deleteTask(task.id));
@@ -34,17 +44,27 @@ const TaskItem: React.FC<TaskItemProps> = ({ task }) => {
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 20 }}
     >
-      <div className="flex items-center justify-between rounded p-4 hover:bg-offwhite">
+      <div
+        className="group flex items-center justify-between rounded p-4 hover:bg-offwhite"
+        onTouchStart={handleTouchStart}
+        onBlur={handleTouchEnd}
+        onTouchMove={handleTouchEnd}
+      >
         <div className="flex items-start gap-2">
           <div>
-            <Avvvatars value={task.title} size={20} />
+            <Avvvatars value={task.title} size={24} />
           </div>
           <div className="flex flex-col gap-2">
-            <h3 className="font-semibold">{task.title}</h3>
-            <p className="text-gray-600 text-sm">{task.description}</p>
+            <h3 className="text-[14px] font-semibold text-primary">
+              {task.title}
+            </h3>
+            <p className="text-gray-600 text-base">{task.description}</p>
+            <p className="text-[#767676] text-[10px]">
+              {Dayjs(task.date).format("dddd DD, MMMM YYYY")}
+            </p>
           </div>
         </div>
-        <div className="flex flex-col items-center">
+        <div className="grid min-w-fit grid-rows-2 flex-col items-center">
           <div className="flex items-center gap-2">
             <span
               className={`h-2 w-2 rounded-full`}
@@ -54,7 +74,11 @@ const TaskItem: React.FC<TaskItemProps> = ({ task }) => {
             ></span>
             <span>{task.status}</span>
           </div>
-          <div className="flex space-x-2">
+          <div
+            className={
+              isTouched ? "flex" : "hidden" + " h-6 space-x-2 group-hover:flex"
+            }
+          >
             <button
               className="text-blue-500 hover:text-blue-700"
               onClick={handleModalOpen}

@@ -27,16 +27,16 @@ const TaskList: React.FC = () => {
     <div>
       <Search onSearch={handleSearch} />
       <TaskAccordion
+        title="In progress"
+        tasks={filteredTasks.filter((task) => task.status === "In progress")}
+        isOpen={openAccordion === "In progress"}
+        onToggle={() => handleToggle("In progress")}
+      />
+      <TaskAccordion
         title="Pending"
         tasks={filteredTasks.filter((task) => task.status === "pending")}
         isOpen={openAccordion === "pending"}
         onToggle={() => handleToggle("pending")}
-      />
-      <TaskAccordion
-        title="In Progress"
-        tasks={filteredTasks.filter((task) => task.status === "in-progress")}
-        isOpen={openAccordion === "in-progress"}
-        onToggle={() => handleToggle("in-progress")}
       />
       <TaskAccordion
         title="Completed"

@@ -20,7 +20,7 @@ const TaskAccordion: React.FC<TaskAccordionProps> = ({
   return (
     <div className="my-4">
       <button
-        className="flex w-full items-center justify-between rounded bg-offwhite px-4 py-2"
+        className="flex w-full items-center justify-between rounded bg-offwhite px-4 py-3"
         onClick={onToggle}
       >
         <div>

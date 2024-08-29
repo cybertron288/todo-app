@@ -16,7 +16,7 @@ const Search: React.FC<SearchProps> = ({ onSearch }) => {
   return (
     <div className="relative">
       <input
-        className="mb-2 w-full rounded border border-gray p-2 pl-10 focus:outline-1 focus:outline-primary"
+        className="mb-2 h-[40px] w-full rounded border border-gray p-2 pl-10 focus:outline-1 focus:outline-primary"
         type="text"
         placeholder="Search To-Do"
         value={query}

@@ -4,12 +4,13 @@ export interface Task {
     id: string;
     title: string;
     description: string;
-    status: 'pending' | 'in-progress' | 'completed';
+    status: 'pending' | 'In progress' | 'completed';
+    date: Date
 }
 
 export interface StatusColorMap {
     pending: string,
-    "in-progress": string,
+    "In progress": string,
     completed: string,
 }
 
@@ -36,7 +37,7 @@ const initialState: TasksState = {
     editTask: null,
     statusColorMap: {
         pending: "#D0D0D0",
-        "in-progress": "#FFB03C",
+        "In progress": "#FFB03C",
         completed: "#368A04",
     }
 };
@@ -49,13 +50,14 @@ const tasksSlice = createSlice({
             state.tasks.push(action.payload);
             saveTasksToLocalStorage(state.tasks);
         },
-        updateTask: (state, action: PayloadAction<{ id: string; title: string; description: string; status: Task['status'] }>) => {
-            const { id, title, status, description } = action.payload;
+        updateTask: (state, action: PayloadAction<{ id: string; title: string; description: string; status: Task['status']; date: Date }>) => {
+            const { id, title, status, description, date } = action.payload;
             const task = state.tasks.find(task => task.id === id);
             if (task) {
                 task.title = title;
                 task.status = status;
                 task.description = description;
+                task.date = date
                 saveTasksToLocalStorage(state.tasks);
             }
         },

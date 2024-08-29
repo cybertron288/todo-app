@@ -4,7 +4,7 @@ This is a simple TO-DO application built using React, TypeScript, Vite, Tailwind
 
 ## Features
 
-- **Task List:** Display a list of tasks categorized by status (In Progress, Pending, Completed).
+- **Task List:** Display a list of tasks categorized by status (In progress, Pending, Completed).
 - **Add Task:** Add new tasks with a title and description.
 - **Edit Task:** Edit the details of an existing task.
 - **Delete Task:** Remove a task from the list.
@@ -71,4 +71,4 @@ To get a local copy of the project up and running, follow these steps:
 2. Edit Task: Click the pencil icon next to any task to edit it. Modify the details and click "Update".
 3. Delete Task: Click the trash icon next to any task to delete it.
 4. Mark as Completed: Click the checkbox next to any task to mark it as completed.
-5. Accordion: Click on the task status headers (In Progress, Pending, Completed) to toggle the visibility of tasks under each status.
+5. Accordion: Click on the task status headers (In progress, Pending, Completed) to toggle the visibility of tasks under each status.
