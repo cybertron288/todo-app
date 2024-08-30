@@ -65,9 +65,9 @@ const TaskItem: React.FC<TaskItemProps> = ({ task }) => {
           </div>
         </div>
         <div className="grid min-w-fit grid-rows-2 flex-col items-center">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-[5px]">
             <span
-              className={`h-2 w-2 rounded-full`}
+              className={`h-[10px] w-[10px] rounded-full`}
               style={{
                 backgroundColor: statusMap[task.status],
               }}

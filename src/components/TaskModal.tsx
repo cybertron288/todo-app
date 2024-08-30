@@ -1,10 +1,12 @@
 import { Combobox, Dialog } from "@headlessui/react";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
-import PlusIcon from "../assets/svg/plus.svg?react";
+import ArrowIcon from "../assets/svg/arrow.svg?react";
 import BackIcon from "../assets/svg/back.svg?react";
+import PlusIcon from "../assets/svg/plus.svg?react";
+import type { StatusColorMap, Task } from "../slice/tasksSlice";
 import {
   addTask,
   closeModal,
@@ -12,7 +14,6 @@ import {
   updateTask,
 } from "../slice/tasksSlice";
 import { RootState } from "../store";
-import type { Task, StatusColorMap } from "../slice/tasksSlice";
 
 interface TaskModalProps {
   task?: Task;
@@ -107,7 +108,10 @@ const TaskModal: React.FC<TaskModalProps> = ({}) => {
                 exit={{ scale: 0.8, opacity: 0 }}
               >
                 <Dialog.Title className="flex gap-5 bg-primary p-6 text-2xl font-bold text-white md:bg-white md:p-0 md:text-inherit">
-                  <span className="md:hidden" onClick={() => dispatch(closeModal())}>
+                  <span
+                    className="md:hidden"
+                    onClick={() => dispatch(closeModal())}
+                  >
                     <BackIcon />
                   </span>
                   <span>{editTask ? "Edit Task" : "Add Task"}</span>
@@ -124,23 +128,31 @@ const TaskModal: React.FC<TaskModalProps> = ({}) => {
                     className="w-full rounded border border-gray p-2 focus:outline-1 focus:outline-primary"
                     placeholder="Enter the description"
                     value={description}
+                    rows={4}
                     onChange={(e) => setDescription(e.target.value)}
                   />
                   {editTask && (
-                    <div>
+                    <>
                       <Combobox
                         value={selectedStatus}
                         onChange={(value) =>
                           setSelectedStatus(value ?? "pending")
                         }
                       >
-                        <div className="relative">
-                          <Combobox.Button as="div">
+                        <div
+                          className="relative"
+                        >
+                          <Combobox.Button as="div" className="relative">
                             <Combobox.Input
                               readOnly
                               className="bg-gray-800 inline-flex w-full cursor-pointer items-center gap-2 rounded border border-gray px-3 py-1.5 pr-10 text-sm/6 focus:outline-primary"
                               displayValue={(status: string) => status}
                             />
+                            <div
+                              className="absolute right-[6px] top-[12px] rotate-180"
+                            >
+                              <ArrowIcon />
+                            </div>
                           </Combobox.Button>
                           <Combobox.Options className="absolute z-[2] mt-1 max-h-60 w-full overflow-auto bg-white py-4 pl-4 pr-5 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                             {statuses.map((status) => (
@@ -154,9 +166,7 @@ const TaskModal: React.FC<TaskModalProps> = ({}) => {
                                 }
                               >
                                 {({ selected }) => (
-                                  <span
-                                    className={`flex items-center gap-2`}
-                                  >
+                                  <span className={`flex items-center gap-2`}>
                                     <span
                                       className={`h-3 w-3 rounded-full`}
                                       style={{
@@ -173,7 +183,7 @@ const TaskModal: React.FC<TaskModalProps> = ({}) => {
                           </Combobox.Options>
                         </div>
                       </Combobox>
-                    </div>
+                    </>
                   )}
                   <div className="absolute bottom-0 left-0 mt-4 flex w-full justify-between p-6 md:relative md:p-0 md:px-0">
                     <button
